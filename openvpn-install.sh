@@ -163,36 +163,39 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		esac
 	done
 else
-	clear
-	echo 'Welcome to this quick OpenVPN "road warrior" installer'
-	echo ""
-	# OpenVPN setup and first user creation
-	echo "I need to ask you a few questions before starting the setup"
-	echo "You can leave the default options and just press enter if you are ok with them"
-	echo ""
-	echo "First I need to know the IPv4 address of the network interface you want OpenVPN"
-	echo "listening to."
-	read -p "IP address: " -e -i $IP IP
-	echo ""
-	echo "What port do you want for OpenVPN?"
-	read -p "Port: " -e -i 1194 PORT
-	echo ""
-	echo "What DNS do you want to use with the VPN?"
-	echo "   1) Current system resolvers"
-	echo "   2) OpenDNS"
-	echo "   3) Level 3"
-	echo "   4) NTT"
-	echo "   5) Hurricane Electric"
-	echo "   6) Google"
-	read -p "DNS [1-6]: " -e -i 1 DNS
-	echo ""
-	echo "Finally, tell me your name for the client cert"
-	echo "Please, use one word only, no special characters"
-	read -p "Client name: " -e -i client CLIENT
-	echo ""
-	echo "Okay, that was all I needed. We are ready to setup your OpenVPN server now"
-	read -n1 -r -p "Press any key to continue..."
-		if [[ "$OS" = 'debian' ]]; then
+	# clear
+	# echo 'Welcome to this quick OpenVPN "road warrior" installer'
+	# echo ""
+	# # OpenVPN setup and first user creation
+	# echo "I need to ask you a few questions before starting the setup"
+	# echo "You can leave the default options and just press enter if you are ok with them"
+	# echo ""
+	# echo "First I need to know the IPv4 address of the network interface you want OpenVPN"
+	# echo "listening to."
+	# read -p "IP address: " -e -i $IP IP
+	# echo ""
+	# echo "What port do you want for OpenVPN?"
+	# read -p "Port: " -e -i 1194 PORT
+    PORT=1194
+	# echo ""
+	# echo "What DNS do you want to use with the VPN?"
+	# echo "   1) Current system resolvers"
+	# echo "   2) OpenDNS"
+	# echo "   3) Level 3"
+	# echo "   4) NTT"
+	# echo "   5) Hurricane Electric"
+	# echo "   6) Google"
+	# read -p "DNS [1-6]: " -e -i 1 DNS
+    DNS=6
+	# echo ""
+	# echo "Finally, tell me your name for the client cert"
+	# echo "Please, use one word only, no special characters"
+	# read -p "Client name: " -e -i client CLIENT
+    CLIENT=client
+	# echo ""
+	# echo "Okay, that was all I needed. We are ready to setup your OpenVPN server now"
+	# read -n1 -r -p "Press any key to continue..."
+	if [[ "$OS" = 'debian' ]]; then
 		apt-get update
 		apt-get install openvpn iptables openssl ca-certificates -y
 	else
@@ -325,17 +328,17 @@ crl-verify /etc/openvpn/easy-rsa/pki/crl.pem" >> /etc/openvpn/server.conf
 	fi
 	# Try to detect a NATed connection and ask about it to potential LowEndSpirit users
 	EXTERNALIP=$(wget -qO- ipv4.icanhazip.com)
-	if [[ "$IP" != "$EXTERNALIP" ]]; then
-		echo ""
-		echo "Looks like your server is behind a NAT!"
-		echo ""
-		echo "If your server is NATed (LowEndSpirit), I need to know the external IP"
-		echo "If that's not the case, just ignore this and leave the next field blank"
-		read -p "External IP: " -e USEREXTERNALIP
-		if [[ "$USEREXTERNALIP" != "" ]]; then
-			IP=$USEREXTERNALIP
-		fi
-	fi
+	# if [[ "$IP" != "$EXTERNALIP" ]]; then
+	# 	echo ""
+	# 	echo "Looks like your server is behind a NAT!"
+	# 	echo ""
+	# 	echo "If your server is NATed (LowEndSpirit), I need to know the external IP"
+	# 	echo "If that's not the case, just ignore this and leave the next field blank"
+	# 	read -p "External IP: " -e USEREXTERNALIP
+	# 	if [[ "$USEREXTERNALIP" != "" ]]; then
+	# 		IP=$USEREXTERNALIP
+	# 	fi
+	# fi
 	# client-common.txt is created so we have a template to add further users later
 	echo "client
 dev tun
@@ -356,5 +359,5 @@ verb 3" > /etc/openvpn/client-common.txt
 	echo "Finished!"
 	echo ""
 	echo "Your client config is available at ~/$CLIENT.ovpn"
-	echo "If you want to add more clients, you simply need to run this script another time!"
+	# echo "If you want to add more clients, you simply need to run this script another time!"
 fi
